@@ -3,7 +3,7 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
 import Foundation
@@ -56,7 +56,6 @@ extension String {
         output = randomStringResult.output
         names.append(contentsOf: randomStringResult.names)
         namesNatural.append(contentsOf: randomStringResult.namesNatural)
-        
 
         // Replace all instances of RANDOM_STRING_VALUE with a random string from the correct set of options.
 
@@ -110,7 +109,7 @@ extension String {
 
         if split.count == 2 {
             // we have a filter!
-            return self.applyingFilter(split[1])
+            return split[0].applyingFilter(split[1])
         } else {
             return self
         }
@@ -156,7 +155,6 @@ extension String {
 
         return output
     }
-
 
     /// Creates an integer variable with a random name.
     fileprivate func resolveRandomIntName(input: String) -> (output: String, names: [String], namesNatural: [String]) {

@@ -3,11 +3,12 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
 import UIKit
 
+/// Manages all the rows in the Help table view, handing taps back to a delegate where appropriate.
 class HelpDataSource: NSObject, UITableViewDataSource {
     weak var delegate: TappableTextViewDelegate?
     let items = Bundle.main.decode([HelpItem].self, from: "Help.json")

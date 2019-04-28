@@ -3,7 +3,7 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
 import UIKit
@@ -21,6 +21,7 @@ class LearnViewController: UITableViewController, Storyboarded, UserTracking, UI
         assert(coordinator != nil, "You must set a coordinator before presenting this view controller.")
 
         title = "Learn"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Glossary", style: .plain, target: self, action: #selector(showGlossary))
         registerForUserChanges()
 
         tableView.dataSource = dataSource
@@ -50,5 +51,9 @@ class LearnViewController: UITableViewController, Storyboarded, UserTracking, UI
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         coordinator?.startStudying(using: viewControllerToCommit)
+    }
+
+    @objc func showGlossary() {
+        coordinator?.showGlossary()
     }
 }

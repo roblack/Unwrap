@@ -3,10 +3,9 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
-import SavannaKit
-import SourceEditor
+import Sourceful
 import UIKit
 
 /// The view controller that handles Free Coding practice activities.
@@ -79,17 +78,26 @@ class FreeCodingViewController: UIViewController, Storyboarded, PracticingViewCo
     @IBAction func checkAnswer(_ sender: Any) {
         let result = practiceData.check(answer: textView.text)
 
-        if isShowingAnswer {
-            coordinator?.answerSubmitted(from: self, wasCorrect: result.isCorrect)
+        if result.isCorrect == false && coordinator?.retriesAllowed == true {
+            skipOrRetry()
         } else {
-            isShowingAnswer = true
-
-            if result.isCorrect {
-                answerButton.correctAnswer()
+            if isShowingAnswer {
+                coordinator?.answerSubmitted(from: self, wasCorrect: result.isCorrect)
             } else {
-                answerButton.wrongAnswer()
+                isShowingAnswer = true
+
+                if result.isCorrect {
+                    answerButton.correctAnswer()
+                } else {
+                    answerButton.wrongAnswer()
+                }
             }
         }
+    }
+
+    /// Give users the choice of trying again or skipping
+    func skipOrRetry() {
+        showAlert(title: "That's not quite right!", body: "Check your code carefully, and try going for the simplest solution that works.", coordinator: nil, alternateTitle: nil, alternateAction: nil)
     }
 
     /// Allows users to dismiss the keyboard when they are ready, so they can tap submit

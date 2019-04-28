@@ -3,28 +3,19 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
-import SavannaKit
-import SourceEditor
+import Sourceful
 import UIKit
 
-class SingleSelectReviewViewController: ReviewViewController, Storyboarded, Sequenced {
-    struct Answer {
-        var text: String
-        var isCorrect: Bool
-    }
-
+class SingleSelectReviewViewController: ReviewViewController, Storyboarded {
     @IBOutlet var prompt: UILabel!
     @IBOutlet var code: SyntaxTextView!
 
     @IBOutlet var answerButtons: UIStackView!
     @IBOutlet var trueButton: UIButton!
     @IBOutlet var falseButton: UIButton!
-
-    /// The current question in the answer sequence.
-    var questionNumber = 1
 
     /// The array of all answers in the whole sequence. Tracking this allows us to ensure questions don't repeat.
     var answers = [Answer]()
@@ -49,8 +40,8 @@ class SingleSelectReviewViewController: ReviewViewController, Storyboarded, Sequ
 
         if answers.isEmpty {
             // this is the first review screen; set up the answers here
-            answers += review.correct.map { Answer(text: $0, isCorrect: true) }
-            answers += review.wrong.map { Answer(text: $0, isCorrect: false) }
+            answers += review.correct.map { Answer(text: $0.answer, subtitle: $0.reason, isCorrect: true, isSelected: false) }
+            answers += review.wrong.map { Answer(text: $0.answer, subtitle: $0.reason, isCorrect: false, isSelected: false) }
             answers.shuffle()
         }
 
@@ -72,6 +63,14 @@ class SingleSelectReviewViewController: ReviewViewController, Storyboarded, Sequ
         navigationItem.leftBarButtonItem?.isEnabled = false
         selected.setTitle("CONTINUE", for: .normal)
 
+        // disable the other button
+        if selected == trueButton {
+            falseButton.disable()
+        } else {
+            trueButton.disable()
+        }
+
+        // update the button they tapped to reflect whether they were right or wrong
         if selected == trueButton {
             if currentAnswer.isCorrect {
                 selected.correctAnswer()
@@ -84,6 +83,19 @@ class SingleSelectReviewViewController: ReviewViewController, Storyboarded, Sequ
             } else {
                 selected.correctAnswer()
             }
+        }
+
+        addReasonToTitle()
+    }
+
+    /// If their answer is wrong and we have some explanatory text explaining why it's wrong, show it.
+    func addReasonToTitle() {
+        if !currentAnswer.subtitle.isEmpty {
+            let newTopString = NSMutableAttributedString(attributedString: "\(review.question)\n\n".fromSimpleHTML())
+            let newBottomString = currentAnswer.subtitle.fromSimpleHTML().formattedAsExplanation()
+
+            newTopString.append(newBottomString)
+            prompt.attributedText = newTopString
         }
     }
 }

@@ -3,13 +3,17 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
 import UIKit
 
-class ReviewViewController: UIViewController, AlertShowing {
-    var coordinator: (Skippable & AnswerHandling & AlertHandling)?
+class ReviewViewController: UIViewController, AlertShowing, PracticingViewController {
+    var coordinator: (AnswerHandling & Skippable)?
+
+    var questionNumber = 1
+
+    var practiceType = "review"
 
     var sectionName = ""
     var review: StudyReview!

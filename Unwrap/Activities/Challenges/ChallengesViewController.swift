@@ -3,7 +3,7 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
 import UIKit
@@ -23,6 +23,9 @@ class ChallengesViewController: UITableViewController, Storyboarded, UserTrackin
         title = "Challenges"
         registerForUserChanges()
         tableView.dataSource = dataSource
+
+        NotificationCenter.default.addObserver(self, selector: #selector(userDataChanged), name: UIApplication.willEnterForegroundNotification, object: nil)
+
     }
 
     override func viewWillAppear(_ animated: Bool) {

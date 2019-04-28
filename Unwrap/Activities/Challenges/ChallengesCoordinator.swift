@@ -3,7 +3,7 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
 import SwiftEntryKit
@@ -22,6 +22,9 @@ class ChallengesCoordinator: Coordinator, Awarding, Skippable, AnswerHandling {
     /// The user may skip up to three times in each challenge.
     var skipsRemaining = 3
 
+    /// Whether or not the user can have multiple attempts at questions
+    let retriesAllowed = false
+
     init(navigationController: CoordinatedNavigationController = CoordinatedNavigationController()) {
         self.navigationController = navigationController
         navigationController.navigationBar.prefersLargeTitles = true
@@ -35,18 +38,23 @@ class ChallengesCoordinator: Coordinator, Awarding, Skippable, AnswerHandling {
 
     /// Called when the user starts their daily challenge – removes all the activities, clears their score, and resets the skips they have remaining.
     func startChallenge() {
-        questions.removeAll(keepingCapacity: true)
         currentScore = 0
         skipsRemaining = 3
 
-        // Pick 10 random activities.
-        let possibleActivities: [PracticeActivity.Type] = [TypeCheckerPractice.self, SpotTheErrorPractice.self, PredictTheOutputPractice.self, FreeCodingPractice.self, RearrangeTheLinesPractice.self, TapToCodePractice.self]
+        // Each challenge is made up of specific question types; some are more heavily weighted
+        // because they have significantly more material to work with and are less likely
+        // to produce duplicate questions
+        let possibleActivities: [PracticeActivity.Type] = [
+            SpotTheErrorPractice.self, SpotTheErrorPractice.self, SpotTheErrorPractice.self,
+            RearrangeTheLinesPractice.self, RearrangeTheLinesPractice.self,
+            TapToCodePractice.self, TapToCodePractice.self,
+            PredictTheOutputPractice.self,
+            FreeCodingPractice.self,
+            TypeCheckerPractice.self
+        ]
 
-        for _ in 0 ..< 10 {
-            if let activity = possibleActivities.randomElement() {
-                questions.append(activity)
-            }
-        }
+        // shuffle up the 10 questions to produce our challenge
+        questions = possibleActivities.shuffled()
 
         // Kick off the first activity.
         askQuestion()
@@ -126,6 +134,13 @@ class ChallengesCoordinator: Coordinator, Awarding, Skippable, AnswerHandling {
         let text = "I scored \(challenge.score) in Unwrap's daily challenge for \(challenge.date.formatted). Download it here: \(Unwrap.appURL)"
 
         let alert = UIActivityViewController(activityItems: [text], applicationActivities: nil)
+
+        // if we're on iPad there is nowhere sensible to anchor this from, so just center it
+        if let popOver = alert.popoverPresentationController {
+            popOver.sourceView = self.navigationController.view
+            popOver.sourceRect = CGRect(x: self.navigationController.view.frame.midX, y: self.navigationController.view.frame.midY, width: 0, height: 0)
+        }
+
         navigationController.present(alert, animated: true)
     }
 }

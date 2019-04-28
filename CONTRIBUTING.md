@@ -14,9 +14,9 @@ If you have questions about the code, about making commits, or even if you’re 
 
 ## Tools
 
-Unwrap was built using Xcode 9.3 and Swift 4.1. I know that some of you will immediately try and run it using Xcode 10/Swift 4.2, but please hold back if you can – I used 4.1 in case I’m able to release before 4.2 is generally available, and will upgrade to 4.2 as soon as it’s released.
+Unwrap was built using Xcode 10.2 and Swift 5.0.
 
-You will also need to install SwiftLint so you can check all its tests pass when you make a change, and optionally also CocoaPods if you need to re-install the pods for some reason. Broadly speaking it’s preferable that you don’t upgrade pod versions just for fun – if there’s some particular feature or improvement that’s worthwhile let’s talk it over first.
+The project uses SwiftLint, so please check all its tests pass when you make a change. You may need to install CocoaPods if you need to re-install the pods for some reason. Broadly speaking it’s preferable that you don’t upgrade pod versions just for fun – if there’s some particular feature or improvement that’s worthwhile let’s talk it over first.
 
 Unwrap uses a *lot* of JSON – you should bookmark something like <https://jsonformatter.org> so you can check your JSON is correct easily. Annoyingly, JSON does not allow real line breaks in strings (they are encoded as `\n`), or comments. So, be prepared to read some fairly long strings in JSON! 
 
@@ -33,7 +33,7 @@ After the Activities group you’ll find Extensions, which contain app-wide exte
 
 - **BundleLoading.swift** includes methods and initializers for various types that load content directly from the bundle. For example, `Data`, `String`, `UIImage` and `UIColor` all contain `bundleName:` initializers that retrieve content from the bundle or crash on failure. Loading from the bundle should never fail, so this helps stop accidental typos.
 - **String-Attributed.swift** includes a handful of methods for converting `String` to `NSAttributedString`. These are useful when you have minimal markup to parse, or when doing syntax highlighting.
-- **String-Placeholders.swift** turns code strings with special placeholders, such as `RANDOM_STRING_VALUE_0`, into finished code. This is used to randomize the code in Predict the Output and Tap to Code so the user isn’t always face with exactly the same code.
+- **String-Placeholders.swift** turns code strings with special placeholders, such as `RANDOM_STRING_VALUE_0`, into finished code. This is used to randomize the code in Predict the Output and Tap to Code so the user isn’t always faced with exactly the same code.
 - **String-Variables.swift** turns a string of code into a string of homogenized code through a process of anonymization.  This is used in the Free Coding practice so that minor differences in code – did they use `var` when they could have used `let`? Did they name their struct `Bike` rather than `Bicycle`? – are ignored.
 - **UIButton-Types.swift** contains default styling for the buttons in the app: primary and secondary buttons, plus methods that color them as correct and wrong as needed.
 - **UITableViewCell-Styling.swift** contains the same sort of theming for table view cells.
@@ -53,9 +53,7 @@ Moving on, the `Reusables` group stores a a handful of reusable components such 
 
 The `User` group contains three files, all of which combine together to make the `User` class. This is a singleton because there can only ever be one user, and it’s shared across the app. This class is split into three files mainly to make it easier to understand – this one class handles everything to do with user data, so there’s a lot to it.
 
-Finally, outside all the groups, is the main tab bar controller responsible for setting up the coordinators in each of its five tabs. You’ll also see Swift42.swift, which contains a number of shims that let me use some Swift 4.2 code inside Swift 4.1, and Unwrap.swift, which is a tiny enum containing some static constants that are used throughout the app.
-
-**Note:** Along with mostly removing Swift42.swift, when we migrate to Xcode 10 we’ll be able to use the Large Title style for attributed strings in Interface Builder. This is absent in Xcode 9.4, so Heading 1 is used in lieu.
+Finally, outside all the groups, is the main tab bar controller responsible for setting up the coordinators in each of its five tabs. You’ll also see Unwrap.swift, which is a tiny enum containing some static constants that are used throughout the app.
 
 
 ## Navigation
@@ -71,11 +69,11 @@ It’s the job of coordinators to manage the flow inside the application, so ide
 
 ## Home
 
-I want to go into detail on the key parts of each app tab, starting with Home – the one users see when the app launches. This is main responsible for showing a single table view that provides details of the user’s learning progress so far: how many points they have, what rank they are, and what badges they have unlocked.
+I want to go into detail on the key parts of each app tab, starting with Home – the one users see when the app launches. This is mainly responsible for showing a single table view that provides details of the user’s learning progress so far: how many points they have, what rank they are, and what badges they have unlocked.
 
 This table includes two important parts: a `StatusView` that renders their current rank image and a progress ring around it, and a `BadgeCollectionViewCell` that embeds a collection view inside the table view.
 
-The `StatusView` was originally implemented using a simple `CAShapeLayer` for drawing the activity ring, but that has a problem: because this same `StatusView` is used when awarding points, it’s likely that the user will score more points that necessary to advance to the next rank. Using a `CAShapeLayer` doesn’t allow us to render the activity ring beyond 100%, so this now uses `MKRingProgressView`.
+The `StatusView` was originally implemented using a simple `CAShapeLayer` for drawing the activity ring, but that has a problem: because this same `StatusView` is used when awarding points, it’s likely that the user will score more points than necessary to advance to the next rank. Using a `CAShapeLayer` doesn’t allow us to render the activity ring beyond 100%, so this now uses `MKRingProgressView`.
 
 The collection view is used as a single row in the table so that we can show badges in a free-flowing grid. This causes a little complexity because we need to make `BadgeTableViewCell` conform to `UserTracking` so that badges appear unlocked as soon as they are earned, but it’s nothing difficult.
 
@@ -104,6 +102,7 @@ The Practice tab is by far the most complex, mostly because it encompasses multi
 3. All are locked until the user has read a particular chapter of the book; this is stored the practice activity’s `lockedUntil` property.
 
 Let’s dive in to each of the practice activities…
+
 
 ### Free Coding
 
@@ -164,14 +163,14 @@ This is a nice and easy practice activity: we load some prewritten code, shuffle
 
 The only real complexity here is that some lines of code – specifically things like `}` or `} else {` – might appear several times in the same code, and there is no way of telling which is which. To avoid this problem entirely, when checking answers all leading whitespace is removed and the code is converted to a string, which means any lone closing brace can be used anywhere.
 
-This one should be easy to write new examples for, but please make sure there is only *one* solution to each problem. This means there should be no ambiguity as to the order each line of code must appear.
+This one should be easy to write new examples for, but please make sure there is only *one* solution to each problem. This means there should be no ambiguity as to the order in which each line of code must appear.
 
 
 ## Spot the Error
 
-This practice activity reads some example code and inserts one small error that users must fine.
+This practice activity reads some example code and inserts one small error that users must identify.
 
-This might not sound too hard, but in fact we need to be extraordinarily careful so that the error is clearly identifiable. As a result, it reads one of 12 different code samples – each with randomization elements inside to keep users on their toes – but each code sample follows a specific structure:
+This might sound trivial, but in all seriousness we need to be extraordinarily careful so that the error is presented clearly. As a result, it reads one of 12 different code samples (with randomization elements inside to keep users on their toes!), each with its own specific structure:
 
 - It starts by defining a function that accepts an integer parameter and returns a string.
 - That function must be called as the final line of code.
@@ -188,14 +187,14 @@ Because those rules are adhered to strictly, this activity can apply many differ
 
 Each code sample is stored in its own file, largely because I found JSON’s lack of line break support too hard to work with here. 
 
-Once you understand how these things are structured, you ought to be able to add new examples fairly easily.
+Once you understand how these things are structured, it should be fairly straightforward to add new examples of your own.
 
 
 ### Tap to Code
 
-This is practice activity shows a jumbled up series of code parts and asks users to arrange them correctly.
+This is a practice activity that shows a jumbled up series of code parts and asks users to arrange them correctly.
 
-In theory this is easy, but in practice it is complicated greatly by the fact that it uses drag and drop. This requires a fair chunk of boilerplate code, but it’s important to allow users to change their mind without having to remove and re-add lots of things.
+In theory this is easy; however, in practice, using drag and drop complicates things. Although a fair chunk of boilerplate code is required, it’s valuable, as it allows the user to change his or her mind without needing to remove and re-add lots of items.
 
 To make this a little easier to follow, I’ve split the core of the implementation into two parts: `TapToCodeDataSource` is responsible for all the collection view drag and drop shenanigans, whereas `TapToCodeModel` handles all the underlying data.
 

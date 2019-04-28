@@ -3,7 +3,7 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
 import UIKit
@@ -17,6 +17,9 @@ class PracticeCoordinator: Coordinator, Awarding, Skippable, AnswerHandling {
 
     /// Stores the user's current score for a practice sequence. Gets reset to 0 when a new practice session starts.
     var currentScore = 0
+
+    /// Whether or not the user can have multiple attempts at questions
+    let retriesAllowed = true
 
     init(navigationController: CoordinatedNavigationController = CoordinatedNavigationController()) {
         self.navigationController = navigationController

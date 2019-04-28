@@ -3,7 +3,7 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
 import SwiftEntryKit
@@ -56,7 +56,7 @@ class AlertViewController: UIViewController, Storyboarded {
         titleLabel.text = title
         bodyLabel.attributedText = body
 
-        // If we have an alternate title then use it, otheriwise hide the alternate action and deactivate the constraint that spaces it to the OK button,
+        // If we have an alternate title then use it, otherwise hide the alternate action and deactivate the constraint that spaces it to the OK button,
         if let alternate = alternateTitle {
             alternateButton.setTitle(alternate, for: .normal)
         } else {

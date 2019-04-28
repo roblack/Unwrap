@@ -3,7 +3,7 @@
 //  UnwrapTests
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
 import XCTest
@@ -101,8 +101,8 @@ class UserTests: XCTestCase {
         let user = User()
         let targetCount = 3
 
-        for _ in 1...targetCount {
-            user.readNewsStory()
+        for i in 1...targetCount {
+            user.readNewsStory(forURL: URL(fileURLWithPath: String(i)))
         }
 
         XCTAssert(user.readNewsCount == targetCount, "Reading one news story should be stored correctly.")
@@ -123,9 +123,33 @@ class UserTests: XCTestCase {
     /// Tests that streaks work correctly.
     func testStreakCounting() {
         let user = User()
-        XCTAssert(user.streakDays == 1, "New users should start with a streak count of 1.")
+        XCTAssertEqual(user.streakDays, 1, "New users should start with a streak count of 1.")
 
         user.updateStreak()
-        XCTAssert(user.streakDays == 1, "Streak count should not change in the same day.")
+        XCTAssertEqual(user.streakDays, 1, "Streak count should not change in the same day.")
+
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        user.lastStreakEntry = yesterday
+        user.updateStreak()
+        XCTAssertEqual(user.streakDays, 2, "Streak count should change for next day.")
+        XCTAssertEqual(user.bestStreak, 2, "Best streak should be updated")
+    }
+
+    /// Testing best streak
+    func testBestStreakCounting() {
+        let user = User()
+
+        user.updateStreak()
+        XCTAssertEqual(user.bestStreak, 1, "Best streak should be updated")
+
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        user.lastStreakEntry = yesterday
+        user.updateStreak()
+        XCTAssertEqual(user.bestStreak, 2, "Best streak should be updated")
+
+        user.bestStreak = 25
+        user.lastStreakEntry = yesterday
+        user.updateStreak()
+        XCTAssertEqual(user.bestStreak, 25, "Best streak should not be updated")
     }
 }

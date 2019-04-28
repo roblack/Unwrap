@@ -3,13 +3,16 @@
 //  Unwrap
 //
 //  Created by Paul Hudson on 09/08/2018.
-//  Copyright © 2018 Hacking with Swift.
+//  Copyright © 2019 Hacking with Swift.
 //
 
 import UIKit
 
 /// Implemented by coordinators that allow users to skip sections of the current activity.
 protocol Skippable {
+    /// Whether or not the user can have multiple attempts at questions
+    var retriesAllowed: Bool { get }
+
     func skipReviewing()
     func skipPracticing()
 }
